@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"server/log"
+
 	"server/settings"
 
 	"github.com/anacrolix/torrent/iplist"
@@ -16,6 +18,7 @@ func ReadBlockedIP() (ranger iplist.Ranger, err error) {
 	if err != nil {
 		return nil, err
 	}
+	log.TLogln("Read block list...")
 	scanner := bufio.NewScanner(strings.NewReader(string(buf)))
 	var ranges []iplist.Range
 	for scanner.Scan() {
@@ -30,6 +33,7 @@ func ReadBlockedIP() (ranger iplist.Ranger, err error) {
 	err = scanner.Err()
 	if len(ranges) > 0 {
 		ranger = iplist.New(ranges)
+		log.TLogln("Readed ranges:", len(ranges))
 	}
 	return
 }

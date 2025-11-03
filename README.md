@@ -32,6 +32,10 @@ TorrServer is a program that allows users to view torrents online without the ne
 The core functionality of TorrServer includes caching torrents and subsequent data transfer via the HTTP protocol,
 allowing the cache size to be adjusted according to the system parameters and the user's internet connection speed.
 
+## AI Documentation
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/YouROK/TorrServer)
+
 ## Features
 
 - Caching
@@ -60,6 +64,29 @@ Run in console
 curl -s https://raw.githubusercontent.com/YouROK/TorrServer/master/installTorrServerLinux.sh | sudo bash
 ```
 
+The script also supports non-interactive installs, explicit version pinning, user switching, and port overrides. Examples:
+
+- Install a specific release while keeping defaults:  
+
+  ```bash
+  curl -s https://raw.githubusercontent.com/YouROK/TorrServer/master/installTorrServerLinux.sh | \
+    sudo bash -s -- --install 135 --silent
+  ```
+
+- Update an existing installation without prompts:  
+
+  ```bash
+  curl -s https://raw.githubusercontent.com/YouROK/TorrServer/master/installTorrServerLinux.sh | \
+    sudo bash -s -- --update --silent
+  ```
+
+- Change the systemd service user:  
+
+  ```bash
+  curl -s https://raw.githubusercontent.com/YouROK/TorrServer/master/installTorrServerLinux.sh | \
+    sudo bash -s -- --change-user root --silent
+  ```
+
 #### macOS
 
 Run in Terminal.app
@@ -74,7 +101,7 @@ Alternative install script for Intel Macs: <https://github.com/dancheskus/TorrSe
 
 On FreeBSD (TrueNAS/FreeNAS) you can use this plugin: <https://github.com/filka96/iocage-plugin-TorrServer>
 
-#### For NAS Systems (Unofficial)
+#### NAS Systems (Unofficial)
 
 - Several releases are available through this link: <https://github.com/vladlenas>
 - **Synology NAS** packages repo source: <https://grigi.lt>
@@ -147,6 +174,7 @@ services:
     torrserver:
         image: ghcr.io/yourok/torrserver
         container_name: torrserver
+        network_mode: host    # to allow DLNA feature
         environment:
             - TS_PORT=5665
             - TS_DONTKILL=1
@@ -159,15 +187,19 @@ services:
         ports:
             - '5665:5665'
         restart: unless-stopped
+        
 
 ```
 
-#### NAS releases
-https://github.com/vladlenas
+### Smart TV (using Media Station X)
 
-Synology NAS packages repo source: https://grigi.lt
+1. Install **Media Station X** on your Smart TV (see [platform support](https://msx.benzac.de/info/?tab=PlatformSupport))
 
-### Development
+2. Open it and go to: **Settings -> Start Parameter -> Setup**
+
+3. Enter current ip and port of the TorrServe(r), e.g. `127.0.0.1:8090`
+
+## Development
 
 #### Go server
 
@@ -186,7 +218,7 @@ To run the web server locally, just run
 yarn start
 ```
 
-More info at https://github.com/YouROK/TorrServer/tree/master/web#readme
+More info at <https://github.com/YouROK/TorrServer/tree/master/web#readme>
 
 ### Build
 
@@ -218,12 +250,6 @@ cd server; swag init -g web/server.go
 swag fmt
 ```
 
-### MSX Install
-
-Open msx and goto: Settings -> Start Parameter -> Setup
-
-Enter current ip address and port of server _e.g. 127.0.0.1:8090_
-
 ## API
 
 ### API Docs
@@ -242,6 +268,7 @@ The users data file should be located near to the settings. Basic auth, read mor
     "User2": "Pass2"
 }
 ```
+
 Note: You should enable authentication with -a (--httpauth) TorrServer startup option.
 
 ## Whitelist/Blacklist IP
@@ -265,10 +292,9 @@ local:127.0.0.1
 
 ## Donate
 
-- [QIWI](https://qiwi.com/n/YOUROK85)
 - [YooMoney](https://yoomoney.ru/to/410013733697114/200)
-- SberBank Card: **5484 4000 2285 7839**
-
+- [Boosty](https://boosty.to/yourok)
+- [TBank](https://www.tbank.ru/cf/742qEMhKhKn)
 
 ## Thanks to everyone who tested and helped
 

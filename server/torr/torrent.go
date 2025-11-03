@@ -85,6 +85,11 @@ func NewTorrent(spec *torrent.TorrentSpec, bt *BTServer) (*Torrent, error) {
 		return tor, nil
 	}
 
+	timeout := time.Second * time.Duration(settings.BTsets.TorrentDisconnectTimeout)
+	if timeout > time.Minute {
+		timeout = time.Minute
+	}
+
 	torr := new(Torrent)
 	torr.Torrent = goTorrent
 	torr.Stat = state.TorrentAdded
@@ -92,7 +97,7 @@ func NewTorrent(spec *torrent.TorrentSpec, bt *BTServer) (*Torrent, error) {
 	torr.bt = bt
 	torr.closed = goTorrent.Closed()
 	torr.TorrentSpec = spec
-	torr.AddExpiredTime(time.Minute)
+	torr.AddExpiredTime(timeout)
 	torr.Timestamp = time.Now().Unix()
 
 	go torr.watch()
@@ -106,8 +111,8 @@ func (t *Torrent) WaitInfo() bool {
 		return false
 	}
 
-	// Close torrent if not info while 5 minutes
-	tm := time.NewTimer(time.Minute * 5)
+	// Close torrent if no info in 1 minute + TorrentDisconnectTimeout config option
+	tm := time.NewTimer(time.Minute + time.Second*time.Duration(settings.BTsets.TorrentDisconnectTimeout))
 
 	select {
 	case <-t.Torrent.GotInfo():
@@ -134,7 +139,7 @@ func (t *Torrent) GotInfo() bool {
 	t.Stat = state.TorrentGettingInfo
 	if t.WaitInfo() {
 		t.Stat = state.TorrentWorking
-		t.AddExpiredTime(time.Minute * 5)
+		t.AddExpiredTime(time.Second * time.Duration(settings.BTsets.TorrentDisconnectTimeout))
 		return true
 	} else {
 		t.Close()
@@ -272,7 +277,7 @@ func (t *Torrent) drop() {
 }
 
 func (t *Torrent) Close() bool {
-	if t.cache != nil && t.cache.GetUseReaders() > 0 {
+	if settings.ReadOnly && t.cache != nil && t.cache.GetUseReaders() > 0 {
 		return false
 	}
 	t.Stat = state.TorrentClosed

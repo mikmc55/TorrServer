@@ -677,7 +677,8 @@ const docTemplate = `{
             "properties": {
                 "cacheSize": {
                     "description": "Cache",
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "connectionsLimit": {
                     "type": "integer"
@@ -741,6 +742,10 @@ const docTemplate = `{
                 "removeCacheOnDrop": {
                     "type": "boolean"
                 },
+                "responsiveMode": {
+                    "description": "Reader",
+                    "type": "boolean"
+                },
                 "retrackersMode": {
                     "description": "0 - don` + "`" + `t add, 1 - add retrackers (def), 2 - remove retrackers 3 - replace retrackers",
                     "type": "integer"
@@ -787,10 +792,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "capacity": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "filled": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "hash": {
                     "type": "string"
@@ -805,7 +812,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "piecesLength": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "readers": {
                     "type": "array",
@@ -828,13 +836,15 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "length": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "priority": {
                     "type": "integer"
                 },
                 "size": {
-                    "type": "integer"
+                    "type": "integer",
+                    "format": "int64"
                 }
             }
         },
